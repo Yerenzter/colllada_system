@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block head %}
+<title>Dianalyn | Edit Book</title>
+{% endblock %} {% block body %}
+<div class="row p-3 g-3">
+  <div class="col s12 m4"></div>
+  <div class="col s12 m4">
+    <h4>Edit book</h4>
+    <form
+      action="{{ url_for('edit', id=book.id) }}"
+      class="col s12 row"
+      method="post"
+    >
+      <div class="input-field outlined col s12">
+        <input type="text" name="title" id="name" placeholder=" " required />
+        <label for="name" class="white lighten-5">Title</label>
+        <span class="suffix"><i class="material-icons">book</i></span>
+      </div>
+
+      <div class="input-field outlined col s12">
+        <input type="text" name="author" id="author" placeholder=" " required />
+        <label for="author" class="white lighten-5">Author</label>
+        <span class="suffix"><i class="material-icons">person</i></span>
+      </div>
+
+      <div class="input-field outlined col s12">
+        <input type="number" name="year" id="year" placeholder=" " required />
+        <label for="year" class="white lighten-5">Publication Year</label>
+        <span class="suffix"><i class="material-icons">schedule</i></span>
+      </div>
+
+      <button
+        type="submit"
+        class="btn deep-purple tonal accent-1 waves-effect waves-light col s12"
+      >
+        Edit now
+      </button>
+    </form>
+  </div>
+  <div class="col s12 m4"></div>
+</div>
+{% endblock %}

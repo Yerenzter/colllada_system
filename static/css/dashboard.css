@@ -1,0 +1,90 @@
+body {
+  overflow: hidden;
+}
+
+.indicator {
+  width: 32px;
+  height: 32px;
+  padding: 1rem;
+  border-radius: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.warning {
+  animation-name: warning;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.danger {
+  animation-name: danger;
+  animation-duration: 0.3s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.phantom {
+  position: absolute;
+}
+
+.ghost {
+  opacity: 0;
+}
+
+.main {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+#line-1,
+#line-2,
+#line-3 {
+  height: 7px;
+  transition: opacity 0.5s;
+  border-radius: 24px;
+}
+
+#line-1 {
+  width: 240px;
+}
+
+#line-2  {
+  width: 160px;
+}
+
+#line-3 {
+  width: 80px;
+}
+
+@keyframes warning {
+  33% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 1;
+  }
+}
+
+@keyframes danger {
+  33% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 1;
+  }
+}

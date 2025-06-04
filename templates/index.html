@@ -1,0 +1,157 @@
+{% extends 'base.html' %} {% block head %}
+<title>Collada | Anti Collision System</title>
+{% endblock %} {% block body %}
+<div class="row center-align">
+  <div class="col s12 center-align">
+    <h6>DISTANCE (FRONT)</h6>
+    <h3 id="distance-front">N/A</h3>
+  </div>
+  <div class="col s12 flex justify-center g-3">
+    <div id="indicator-front-safe" class="indicator blue lighten-5"></div>
+    <div id="indicator-front-warning" class="indicator yellow lighten-5"></div>
+    <div id="indicator-front-danger" class="indicator red lighten-5"></div>
+  </div>
+
+  <div class="col s12 center-align main">
+    <div id="line-1" class="blue"></div>
+    <div id="line-2" class="blue"></div>
+    <div id="line-3" class="blue"></div>
+    <img
+      id="car"
+      src="{{ url_for('static', filename='img/car.avif') }}"
+      width="280"
+      alt="car"
+      srcset=""
+    />
+  </div>
+
+  <div class="col s12 flex justify-center g-3flex justify-center g-3">
+    <div id="indicator-back-safe" class="indicator blue lighten-5"></div>
+    <div id="indicator-back-warning" class="indicator yellow lighten-5"></div>
+    <div id="indicator-back-danger" class="indicator red lighten-5"></div>
+  </div>
+  <div class="col s12 center-align">
+    <h3 id="distance-back">N/A</h3>
+    <h6>DISTANCE (BACK)</h6>
+  </div>
+</div>
+
+<audio id="beeper" class="ghost" controls>
+  <source src="{{ url_for('static', filename='audio/beep.wav') }}" />
+</audio>
+
+<script
+  src="{{ url_for('static', filename='js/socket.io.js') }}"
+  type="text/javascript"
+></script>
+<script>
+  const socket = io.connect("http://" + document.domain + ":" + location.port);
+  const distanceFront = document.querySelector("#distance-front");
+  const distanceBack = document.querySelector("#distance-back");
+
+  const indicatorFrontSafe = document.querySelector("#indicator-front-safe");
+  const indicatorFrontWarning = document.querySelector(
+    "#indicator-front-warning"
+  );
+  const indicatorFrontDanger = document.querySelector(
+    "#indicator-front-danger"
+  );
+  const indicatorBackSafe = document.querySelector("#indicator-back-safe");
+  const indicatorBackWarning = document.querySelector(
+    "#indicator-back-warning"
+  );
+  const indicatorBackDanger = document.querySelector("#indicator-back-danger");
+
+  const car = document.querySelector("#car");
+  const beeper = document.querySelector("#beeper");
+
+  const line1 = document.querySelector("#line-1");
+  const line2 = document.querySelector("#line-2");
+  const line3 = document.querySelector("#line-3");
+
+  let frontDistance = 0;
+  let backDistance = 0;
+
+  let tmpX;
+  let tmpY;
+
+  socket.on("serial_data", (msg) => {
+    if (msg.data.includes("Front")) {
+      tmpX = msg.data.replace("Front:", "");
+      frontDistance = tmpX.replace("m", "");
+
+      distanceFront.textContent = `${frontDistance}m`;
+
+      if (4.0 < frontDistance) {
+        indicatorFrontSafe.setAttribute("class", "indicator blue darken-5");
+        indicatorFrontWarning.setAttribute(
+          "class",
+          "indicator yellow lighten-5"
+        );
+        indicatorFrontDanger.setAttribute("class", "indicator red lighten-5");
+
+        line1.setAttribute("class", "blue");
+        line2.setAttribute("class", "blue");
+        line3.setAttribute("class", "blue");
+
+        car.setAttribute("class", "danger");
+        car.setAttribute("class", "");
+
+        setTimeout(async () => {
+          await beeper.stop();
+        }, 100);
+        return;
+      }
+
+      if (2.0 <= frontDistance) {
+        indicatorFrontSafe.setAttribute("class", "indicator blue lighten-5");
+        indicatorFrontWarning.setAttribute(
+          "class",
+          "indicator yellow darken-5"
+        );
+        indicatorFrontDanger.setAttribute("class", "indicator red lighten-5");
+
+        line1.setAttribute("class", "ghost");
+        line2.setAttribute("class", "yellow warning");
+        line3.setAttribute("class", "yellow warning");
+
+        car.setAttribute("class", "warning");
+
+        setTimeout(async () => {
+          await beeper.play();
+        }, 1000);
+        return;
+      }
+
+      if (frontDistance <= 3.0) {
+        indicatorFrontSafe.setAttribute("class", "indicator blue lighten-5");
+        indicatorFrontWarning.setAttribute(
+          "class",
+          "indicator yellow lighten-5"
+        );
+        indicatorFrontDanger.setAttribute("class", "indicator red darken-5");
+
+        line1.setAttribute("class", "red ghost");
+        line2.setAttribute("class", "red ghost");
+        line3.setAttribute("class", "red danger");
+
+        car.setAttribute("class", "danger");
+
+        setTimeout(async () => {
+          await beeper.play();
+        }, 10);
+        return;
+      }
+      return;
+    }
+
+    if (msg.data.includes("Back")) {
+      tmpY = msg.data.replace("Back:", "");
+      backDistance = tmpY.replace("m", "");
+
+      distanceBack.textContent = `${backDistance}m`;
+      return;
+    }
+  });
+</script>
+{% endblock %}
